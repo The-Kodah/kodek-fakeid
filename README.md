@@ -9,6 +9,7 @@ Different ID types: regular ID, driver's license (DL), firearms license (FL), et
 
 ### Dependencies
 + [QBox](https://github.com/Qbox-Project/qbx_core)
++ [qbx-idcard](https://github.com/Qbox-project/qbx_idcard) or [um-idcard](https://github.com/alp1x/um-idcard)
 + [ox_target](https://github.com/overextended/ox_target)
 + [ps-ui](https://github.com/Project-Sloth/ps-ui)
 
