@@ -8,9 +8,9 @@ Flexible pricing system.
 Different ID types: regular ID, driver's license (DL), firearms license (FL), etc.
 
 ### Dependencies
-[QBox](https://github.com/Qbox-Project/qbx_core)
-[ox_target](https://github.com/overextended/ox_target)
-[ps-ui](https://github.com/Project-Sloth/ps-ui)
++ [QBox](https://github.com/Qbox-Project/qbx_core)
++ [ox_target](https://github.com/overextended/ox_target)
++ [ps-ui](https://github.com/Project-Sloth/ps-ui)
 
 ### Installation
 Download or clone this repository to your FiveM server resource folder.
