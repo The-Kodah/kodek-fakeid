@@ -24,3 +24,9 @@ shared_scripts {
     'config.lua',
 	'@ox_lib/init.lua'
 }
+
+dependencies {
+    'qbx_core',
+    'ox_target',
+    'ps-ui'
+}
