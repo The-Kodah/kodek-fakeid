@@ -369,3 +369,42 @@ RegisterServerEvent("fakeid:forgefl", function(firstname, lastname, sex, dob, na
     end
 
 end)
+
+local localVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
+local githuburl = "https://api.github.com/repos/The-Kodah/kodek-fakeid/releases/latest"
+
+local function extractVersion(fxManifestContent)
+    for line in string.gmatch(fxManifestContent, "[^\r\n]+") do
+        if line:find("^version%s+'(.-)'$") then
+            return line:match("^version%s+'(.-)'$")
+        end
+    end
+    return nil
+end
+
+local function checkForUpdates()
+    PerformHttpRequest(githuburl, function(statusCode, response, headers)
+        if statusCode == 200 then
+            local remoteVersion = extractVersion(response)
+            if remoteVersion and remoteVersion ~= localVersion then
+                print("^7==============================")
+                print("^5[kodek-fakeid] ^7NEW UPDATE: ^2" .. remoteVersion .. "^7 | ^1CURRENT: ^1" .. localVersion.." ^7>> Download new version from https://github.com/The-Kodah/kodek-fakeid")
+                print("^7==============================")
+            else
+                print("^7==============================")
+                print("^5[kodek-fakeid] ^7You are on latest version: ^2" .. localVersion)
+                print("^7==============================")
+            end
+        else
+            print("^7==============================")
+            print("^5[kodek-fakeid] ^7Failed to check for updates. Status code: ^1" .. statusCode)
+            print("^7==============================")
+        end        
+    end, "GET", "", {["Content-Type"] = "text/plain"})
+end
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if GetCurrentResourceName() == resourceName then
+        checkForUpdates()
+    end
+end)
