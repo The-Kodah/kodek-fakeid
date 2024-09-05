@@ -9,10 +9,6 @@ Kodek.FakeIDExit = vector3(1174.0, -3196.63, -39.01)                           -
 Kodek.ExitSpawn = vector4(274.655, -3015.376, 5.690064, 85.03936)            -- Exit Spawn Location
 Kodek.ForgeStart = vector3(1160.2951660156, -3192.9460449219, -39.212448120117)  -- Laptop Location
 
--- Door Decal Location/Size
-Kodek.DecalCoords = vector3(273.4946, -3015.508, 5.690064)
-Kodek.DecalSize = 2.0
-
 -- Door Interaction Radius
 Kodek.Radius = 1
 
