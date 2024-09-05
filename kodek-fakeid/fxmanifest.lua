@@ -28,11 +28,4 @@ shared_scripts {
 dependencies {
     'qbx_core',
     'ox_target',
-    'ps-ui'
 }
-
-files {
-    'stream/custom_decal.ytd'
-}
-
-data_file 'DLC_ITYP_REQUEST' 'stream/custom_decal.ytd'
