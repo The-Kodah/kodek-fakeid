@@ -18,357 +18,593 @@ RegisterServerEvent("fakeid:forgeid", function(firstname, lastname, sex, dob, na
         print("Converted DOB: ", humandate)
     end
 
-
-
     if Kodek.Debug then
         print("Fake ID event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
+    -- Check if the player has the required money
     if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
+
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
             end
+        end
 
-            local fakeinfo = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = humandate,
-                nationality = nationality,
-                header = header
-            }
-            print(player.PlayerData.source, " has entered the following data:")
-            print("First Name: ", firstname)
-            print("Last Name: ", lastname)
-            print("Sex: ", sex)
-            print("DOB: ", humandate)
-            print("Nationality: ", nationality)
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
+                print(player.PlayerData.source, " has entered the following data:")
+                print("First Name: ", firstname)
+                print("Last Name: ", lastname)
+                print("Sex: ", sex)
+                print("DOB: ", humandate)
+                print("Nationality: ", nationality)
+
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
                 if Kodek.Debug then
                     print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
                 end
 
-            exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealID, fakeinfo)
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
+
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealID, fakeinfo)
                 if Kodek.Debug then
                     print(player.PlayerData.source, "received a fake identification")
                 end
 
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
+                exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            end
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake ID.", 5000, 'top')
         end
     else
-        exports.qbx_core:Notify("Error!", 'error' .. Kodek.FakeIDPrice, 5000, "You do not have enough cash. Need $" .. Kodek.FakeIDPrice)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "does not have enough money!")
-            end
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
+        if Kodek.Debug then
+            print(player.PlayerData.source, "does not have enough money!")
+        end
     end
-
 end)
 
+
 -- Function to handle Fake Driver's License creation
-RegisterServerEvent("fakeid:forgedl", function(firstname, lastname, sex, dob, nationality)
+RegisterServerEvent("fakeid:forgedl", function(firstname, lastname, sex, dob, nationality, header)
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
+
+    if Kodek.Debug then
+        print("Raw DOB Timestamp: ", dob)
+    end
+    if dob > 9999999999 then
+        dob = dob / 1000 -- Convert milliseconds to seconds
+    end
+
+    local humandate = os.date("%m/%d/%Y", dob)
+
+    if Kodek.Debug then
+        print("Converted DOB: ", humandate)
+    end
 
     if Kodek.Debug then
         print("Fake DL event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
-    if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
+    -- Check if the player has the required money
+    if player.Functions.GetMoney("cash") >= Kodek.FakeDLPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
-            end
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
 
-            local info = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = dob,
-                nationality = nationality,
-                header = 'Identity'
-            }
-            if Kodek.Debug then
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
+            end
+        end
+
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealDL, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
+
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
                 print(player.PlayerData.source, " has entered the following data:")
                 print("First Name: ", firstname)
                 print("Last Name: ", lastname)
                 print("Sex: ", sex)
-                print("DOB: ", dob)
+                print("DOB: ", humandate)
                 print("Nationality: ", nationality)
-            end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeDLPrice)
+                if Kodek.Debug then
+                    print("Removed $", Kodek.FakeDLPrice, "from: ", player.PlayerData.source)
+                end
 
-            if Kodek.Debug then
-                print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
-            end
-            exports['qbx_idcard']:CreateMetaLicense(src, Kodek.RealID, info)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "received a fake drivers license")
-            end
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
 
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealDL, fakeinfo)
+                if Kodek.Debug then
+                    print(player.PlayerData.source, "received a fake identification")
+                end
+
+                exports.qbx_core:Notify("Success", "Fake DL created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            end
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake DL.", 5000, 'top')
         end
     else
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
         if Kodek.Debug then
             print(player.PlayerData.source, "does not have enough money!")
         end
-
-        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
     end
-
 end)
 
+
 -- Function to handle Fake Weapon License creation
-RegisterServerEvent("fakeid:forgewl", function(firstname, lastname, sex, dob, nationality)
+RegisterServerEvent("fakeid:forgewl", function(firstname, lastname, sex, dob, nationality, header)
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
+
+    if Kodek.Debug then
+        print("Raw DOB Timestamp: ", dob)
+    end
+    if dob > 9999999999 then
+        dob = dob / 1000 -- Convert milliseconds to seconds
+    end
+
+    local humandate = os.date("%m/%d/%Y", dob)
+
+    if Kodek.Debug then
+        print("Converted DOB: ", humandate)
+    end
 
     if Kodek.Debug then
         print("Fake WL event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
-    if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
+    -- Check if the player has the required money
+    if player.Functions.GetMoney("cash") >= Kodek.FakeWLPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
+
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
             end
+        end
 
-            local info = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = dob,
-                nationality = nationality,
-                header = 'Weapon License'
-            }
-            print(player.PlayerData.source, " has entered the following data:")
-            print("First Name: ", firstname)
-            print("Last Name: ", lastname)
-            print("Sex: ", sex)
-            print("DOB: ", dob)
-            print("Nationality: ", nationality)
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealWL, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
+                print(player.PlayerData.source, " has entered the following data:")
+                print("First Name: ", firstname)
+                print("Last Name: ", lastname)
+                print("Sex: ", sex)
+                print("DOB: ", humandate)
+                print("Nationality: ", nationality)
 
-            if Kodek.Debug then
-                print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeWLPrice)
+                if Kodek.Debug then
+                    print("Removed $", Kodek.FakeWLPrice, "from: ", player.PlayerData.source)
+                end
+
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
+
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealWL, fakeinfo)
+                if Kodek.Debug then
+                    print(player.PlayerData.source, "received a fake identification")
+                end
+
+                exports.qbx_core:Notify("Success", "Fake WL created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
             end
-            exports.ox_inventory:AddItem(player.PlayerData.source, Kodek.RealID, 1, info)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "received a fake weapons license")
-            end
-
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake WL.", 5000, 'top')
         end
     else
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
         if Kodek.Debug then
             print(player.PlayerData.source, "does not have enough money!")
         end
-
-        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
     end
-
 end)
+
 
 -- Function to handle Fake Lawyer Pass creation
-RegisterServerEvent("fakeid:forgelp", function(firstname, lastname, sex, dob, nationality)
+RegisterServerEvent("fakeid:forgelp", function(firstname, lastname, sex, dob, nationality, header)
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
 
     if Kodek.Debug then
-        print("Fake ID event started by:")
+        print("Raw DOB Timestamp: ", dob)
+    end
+    if dob > 9999999999 then
+        dob = dob / 1000 -- Convert milliseconds to seconds
+    end
+
+    local humandate = os.date("%m/%d/%Y", dob)
+
+    if Kodek.Debug then
+        print("Converted DOB: ", humandate)
+    end
+
+    if Kodek.Debug then
+        print("Fake LP event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
-    if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
+    -- Check if the player has the required money
+    if player.Functions.GetMoney("cash") >= Kodek.FakeLPPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
+
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
             end
+        end
 
-            local info = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = dob,
-                nationality = nationality,
-                header = 'Lawyer Pass'
-            }
-            print(player.PlayerData.source, " has entered the following data:")
-            print("First Name: ", firstname)
-            print("Last Name: ", lastname)
-            print("Sex: ", sex)
-            print("DOB: ", dob)
-            print("Nationality: ", nationality)
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealLP, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
+                print(player.PlayerData.source, " has entered the following data:")
+                print("First Name: ", firstname)
+                print("Last Name: ", lastname)
+                print("Sex: ", sex)
+                print("DOB: ", humandate)
+                print("Nationality: ", nationality)
 
-            if Kodek.Debug then
-                print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeLPPrice)
+                if Kodek.Debug then
+                    print("Removed $", Kodek.FakeLPPrice, "from: ", player.PlayerData.source)
+                end
+
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
+
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealLP, fakeinfo)
+                if Kodek.Debug then
+                    print(player.PlayerData.source, "received a fake identification")
+                end
+
+                exports.qbx_core:Notify("Success", "Fake LP created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
             end
-            exports.ox_inventory:AddItem(player.PlayerData.source, Kodek.RealID, 1, info)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "received a fake lawyer pass")
-            end
-
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake LP.", 5000, 'top')
         end
     else
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
         if Kodek.Debug then
             print(player.PlayerData.source, "does not have enough money!")
         end
-
-        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
     end
-
 end)
+
 
 -- Function to handle Fake Hunting License creation
-RegisterServerEvent("fakeid:forgehl", function(firstname, lastname, sex, dob, nationality)
+RegisterServerEvent("fakeid:forgehl", function(firstname, lastname, sex, dob, nationality, header)
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
 
     if Kodek.Debug then
-        print("Fake ID event started by:")
+        print("Raw DOB Timestamp: ", dob)
+    end
+    if dob > 9999999999 then
+        dob = dob / 1000 -- Convert milliseconds to seconds
+    end
+
+    local humandate = os.date("%m/%d/%Y", dob)
+
+    if Kodek.Debug then
+        print("Converted DOB: ", humandate)
+    end
+
+    if Kodek.Debug then
+        print("Fake HL event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
-    if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
+    -- Check if the player has the required money
+    if player.Functions.GetMoney("cash") >= Kodek.FakeHLPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
+
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
             end
+        end
 
-            local info = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = dob,
-                nationality = nationality,
-                header = 'Hunting License'
-            }
-            print(player.PlayerData.source, " has entered the following data:")
-            print("First Name: ", firstname)
-            print("Last Name: ", lastname)
-            print("Sex: ", sex)
-            print("DOB: ", dob)
-            print("Nationality: ", nationality)
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealHL, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
+                print(player.PlayerData.source, " has entered the following data:")
+                print("First Name: ", firstname)
+                print("Last Name: ", lastname)
+                print("Sex: ", sex)
+                print("DOB: ", humandate)
+                print("Nationality: ", nationality)
 
-            if Kodek.Debug then
-                print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeHLPrice)
+                if Kodek.Debug then
+                    print("Removed $", Kodek.FakeHLPrice, "from: ", player.PlayerData.source)
+                end
+
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
+
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealHL, fakeinfo)
+                if Kodek.Debug then
+                    print(player.PlayerData.source, "received a fake identification")
+                end
+
+                exports.qbx_core:Notify("Success", "Fake HL created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
             end
-            exports.ox_inventory:AddItem(player.PlayerData.source, Kodek.RealID, 1, info)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "received a fake hunting license")
-            end
-
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake HL.", 5000, 'top')
         end
     else
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
         if Kodek.Debug then
             print(player.PlayerData.source, "does not have enough money!")
         end
-
-        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
     end
-
 end)
+
 
 -- Function to handle Fake Fishing License creation
-RegisterServerEvent("fakeid:forgefl", function(firstname, lastname, sex, dob, nationality)
+RegisterServerEvent("fakeid:forgefl", function(firstname, lastname, sex, dob, nationality, header)
     local src = source
     local player = exports.qbx_core:GetPlayer(src)
 
     if Kodek.Debug then
-        print("Fake ID event started by:")
+        print("Raw DOB Timestamp: ", dob)
+    end
+    if dob > 9999999999 then
+        dob = dob / 1000 -- Convert milliseconds to seconds
+    end
+
+    local humandate = os.date("%m/%d/%Y", dob)
+
+    if Kodek.Debug then
+        print("Converted DOB: ", humandate)
+    end
+
+    if Kodek.Debug then
+        print("Fake FL event started by:")
         print("Player ID: ", player.PlayerData.source)
     end
 
-    if player.Functions.GetMoney("cash") >= Kodek.FakeIDPrice then
+    -- Check if the player has the required money
+    if player.Functions.GetMoney("cash") >= Kodek.FakeFLPrice then
         if Kodek.Debug then
             print(player.PlayerData.source, "has enough money: ", player.Functions.GetMoney("cash"))
         end
 
-        if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealID, 1) then
-            if Kodek.Debug then
-                print(player.PlayerData.source, " has enough inventory space")
+        -- Check if the player has the required items
+        local hasAllItems = true
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            local item = itemData.item
+            local amount = itemData.amount
+            local itemDataInInventory = exports.ox_inventory:GetItem(player.PlayerData.source, item)
+
+            if not itemDataInInventory or itemDataInInventory.count < amount then
+                hasAllItems = false
+                break
             end
+        end
 
-            local info = {
-                firstname = firstname,
-                lastname = lastname,
-                sex = sex,
-                dob = dob,
-                nationality = nationality,
-                header = 'Fishing License'
-            }
-            print(player.PlayerData.source, " has entered the following data:")
-            print("First Name: ", firstname)
-            print("Last Name: ", lastname)
-            print("Sex: ", sex)
-            print("DOB: ", dob)
-            print("Nationality: ", nationality)
+        -- Proceed only if the player has all required items
+        if hasAllItems then
+            -- Check if the player has enough inventory space
+            if exports.ox_inventory:CanCarryItem(player.PlayerData.source, Kodek.RealFL, 1) then
+                if Kodek.Debug then
+                    print(player.PlayerData.source, " has enough inventory space")
+                end
 
-            player.Functions.RemoveMoney("cash", Kodek.FakeIDPrice)
+                local fakeinfo = {
+                    firstname = firstname,
+                    lastname = lastname,
+                    sex = sex,
+                    dob = humandate,
+                    nationality = nationality,
+                    header = header
+                }
+                print(player.PlayerData.source, " has entered the following data:")
+                print("First Name: ", firstname)
+                print("Last Name: ", lastname)
+                print("Sex: ", sex)
+                print("DOB: ", humandate)
+                print("Nationality: ", nationality)
 
-            if Kodek.Debug then
-                print("Removed $", Kodek.FakeIDPrice, "from: ", player.PlayerData.source)
+                -- Remove the required money
+                player.Functions.RemoveMoney("cash", Kodek.FakeFLPrice)
+                if Kodek.Debug then
+                    print("Removed $", Kodek.FakeFLPrice, "from: ", player.PlayerData.source)
+                end
+
+                -- Remove the required items from the player's inventory
+                for _, itemData in ipairs(Kodek.RequiredItems) do
+                    exports.ox_inventory:RemoveItem(player.PlayerData.source, itemData.item, itemData.amount)
+                    if Kodek.Debug then
+                        print("Removed " .. itemData.amount .. "x " .. itemData.item .. " from: " .. player.PlayerData.source)
+                    end
+                end
+
+                -- Create the fake ID
+                exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealFL, fakeinfo)
+                if Kodek.Debug then
+                    print(player.PlayerData.source, "received a fake identification")
+                end
+
+                exports.qbx_core:Notify("Success", "Fake FL created successfully!", 5000, 'top')
+            else
+                exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
             end
-            exports.ox_inventory:AddItem(player.PlayerData.source, Kodek.RealID, 1, info)
-            if Kodek.Debug then
-                print(player.PlayerData.source, "received a fake fishing license")
-            end
-
-            exports.qbx_core:Notify("Success", "Fake ID created successfully!", 5000, 'top')
         else
-            exports.qbx_core:Notify("Error", "You do not have enough Inventory Space", 5000, 'top')
+            exports.qbx_core:Notify("Error", "You do not have the required items to create a fake FL.", 5000, 'top')
         end
     else
+        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
         if Kodek.Debug then
             print(player.PlayerData.source, "does not have enough money!")
         end
-
-        exports.qbx_core:Notify("Error", "You do not have enough cash. Need $" .. Kodek.FakeIDPrice, 5000, 'top')
     end
-
 end)
+
 
 local localVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
 local githuburl = "https://api.github.com/repos/The-Kodah/kodek-fakeid/releases/latest"

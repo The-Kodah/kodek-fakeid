@@ -7,10 +7,14 @@ Kodek.FakeIDEntrance = vector3(275.512, -3015.388, 6.128174)                   -
 Kodek.EntranceSpawn = vector4(1172.4, -3196.642, -39.01246, 87.87402)      -- Entrance Spawn Location
 Kodek.FakeIDExit = vector3(1174.0, -3196.63, -39.01)                           -- Exit Teleport Location
 Kodek.ExitSpawn = vector4(274.655, -3015.376, 5.690064, 85.03936)            -- Exit Spawn Location
-Kodek.ForgeStart = vector3(1162.654, -3196.364, -39.01246)                     -- Forge Menu Location
+Kodek.ForgeStart = vector3(1160.2951660156, -3192.9460449219, -39.212448120117)  -- Laptop Location
+
+-- Door Decal Location/Size
+Kodek.DecalCoords = vector3(273.4946, -3015.508, 5.690064)
+Kodek.DecalSize = 2.0
 
 -- Door Interaction Radius
-Kodek.Radius = 1                
+Kodek.Radius = 1
 
 -- Fake ID Cards Available (true = Disabled)
 Kodek.DisableFakeID = false
@@ -36,15 +40,19 @@ Kodek.RealLP = "lawyer_pass"          -- Real Lawyer Pass Item
 Kodek.RealHL = "hunting_license"      -- Real Hunting License Item
 Kodek.RealFL = "fishing_license"      -- Real Fishing License Item
 
--- Required Items for Craft
-Kodek.BlankCard = "blank_card"
-Kodek.TonerInk = "toner"
-Kodek.Scissors = "scissors"
+--Progress Stages
+Kodek.ProgressStages = {
+    { label = "Entering Personal Information", duration = 10000 },
+    { label = "Processing Data", duration = 10000 },
+    { label = "Printing Fake Card", duration = 10000 },
+}
 
--- Craft Time 
-Kodek.ComputerTime = 10        -- Time in Seconds
---Kodek.NotifyTime = 60*5      -- Not Yet Available
---Kodek.PrintTime = 30         -- Not Yet Available
+-- Required Items for Craft
+Kodek.RequiredItems = {
+    { item = "blank_card", amount = 1 },
+    { item = "laminating_sheet", amount = 1 },
+    { item = "special_ink", amount = 2 }
+}
 
 --[[
 Future Updates:
