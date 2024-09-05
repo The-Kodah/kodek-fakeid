@@ -27,5 +27,5 @@ shared_scripts {
 
 dependencies {
     'qbx_core',
-    'ox_target',
+    'ox_target'
 }
