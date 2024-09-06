@@ -40,7 +40,6 @@ Kodek.RealFL = "fishing_license"      -- Real Fishing License Item
 Kodek.ProgressStages = {
     { label = "Entering Personal Information", duration = 10000 },
     { label = "Processing Data", duration = 10000 },
-    { label = "Printing Fake Card", duration = 10000 },
 }
 
 -- Required Items for Craft

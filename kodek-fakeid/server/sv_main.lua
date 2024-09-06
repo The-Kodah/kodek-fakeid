@@ -183,7 +183,7 @@ RegisterServerEvent("fakeid:forgedl", function(firstname, lastname, sex, dob, na
                 -- Create the fake ID
                 exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealDL, fakeinfo)
                 if Kodek.Debug then
-                    print(player.PlayerData.source, "received a fake identification")
+                    print(player.PlayerData.source, "received a fake drivers license")
                 end
 
                 exports.qbx_core:Notify("Success", "Fake DL created successfully!", 5000, 'top')
@@ -284,7 +284,7 @@ RegisterServerEvent("fakeid:forgewl", function(firstname, lastname, sex, dob, na
                 -- Create the fake ID
                 exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealWL, fakeinfo)
                 if Kodek.Debug then
-                    print(player.PlayerData.source, "received a fake identification")
+                    print(player.PlayerData.source, "received a fake weapons license")
                 end
 
                 exports.qbx_core:Notify("Success", "Fake WL created successfully!", 5000, 'top')
@@ -385,7 +385,7 @@ RegisterServerEvent("fakeid:forgelp", function(firstname, lastname, sex, dob, na
                 -- Create the fake ID
                 exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealLP, fakeinfo)
                 if Kodek.Debug then
-                    print(player.PlayerData.source, "received a fake identification")
+                    print(player.PlayerData.source, "received a fake lawyer pass")
                 end
 
                 exports.qbx_core:Notify("Success", "Fake LP created successfully!", 5000, 'top')
@@ -486,7 +486,7 @@ RegisterServerEvent("fakeid:forgehl", function(firstname, lastname, sex, dob, na
                 -- Create the fake ID
                 exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealHL, fakeinfo)
                 if Kodek.Debug then
-                    print(player.PlayerData.source, "received a fake identification")
+                    print(player.PlayerData.source, "received a fake hunting license")
                 end
 
                 exports.qbx_core:Notify("Success", "Fake HL created successfully!", 5000, 'top')
@@ -587,7 +587,7 @@ RegisterServerEvent("fakeid:forgefl", function(firstname, lastname, sex, dob, na
                 -- Create the fake ID
                 exports['qbx_idcard']:CreateFakeMetaLicense(src, Kodek.RealFL, fakeinfo)
                 if Kodek.Debug then
-                    print(player.PlayerData.source, "received a fake identification")
+                    print(player.PlayerData.source, "received a fake fishing license")
                 end
 
                 exports.qbx_core:Notify("Success", "Fake FL created successfully!", 5000, 'top')
@@ -605,42 +605,21 @@ RegisterServerEvent("fakeid:forgefl", function(firstname, lastname, sex, dob, na
     end
 end)
 
-
+-- Get the local version
 local localVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
-local githuburl = "https://api.github.com/repos/The-Kodah/kodek-fakeid/releases/latest"
 
-local function extractVersion(fxManifestContent)
-    for line in string.gmatch(fxManifestContent, "[^\r\n]+") do
-        if line:find("^version%s+'(.-)'$") then
-            return line:match("^version%s+'(.-)'$")
-        end
-    end
-    return nil
+-- Load and execute the kodekupdate.lua script
+local kodekupdateCode = LoadResourceFile(GetCurrentResourceName(), 'server/kodekupdate.lua')
+
+if kodekupdateCode then
+    assert(load(kodekupdateCode))()
+else
+    print('Failed to load kodekupdate.lua')
 end
 
-local function checkForUpdates()
-    PerformHttpRequest(githuburl, function(statusCode, response, headers)
-        if statusCode == 200 then
-            local remoteVersion = extractVersion(response)
-            if remoteVersion and remoteVersion ~= localVersion then
-                print("^7==============================")
-                print("^5[kodek-fakeid] ^7NEW UPDATE: ^2" .. remoteVersion .. "^7 | ^1CURRENT: ^1" .. localVersion.." ^7>> Download new version from https://github.com/The-Kodah/kodek-fakeid")
-                print("^7==============================")
-            else
-                print("^7==============================")
-                print("^5[kodek-fakeid] ^7You are on latest version: ^2" .. localVersion)
-                print("^7==============================")
-            end
-        else
-            print("^7==============================")
-            print("^5[kodek-fakeid] ^7Failed to check for updates. Status code: ^1" .. statusCode)
-            print("^7==============================")
-        end        
-    end, "GET", "", {["Content-Type"] = "text/plain"})
-end
-
+-- Check for updates when the resource starts
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() == resourceName then
-        checkForUpdates()
+        KodekVersionCheck.checkForUpdates(localVersion)
     end
 end)

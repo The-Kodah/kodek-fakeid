@@ -311,6 +311,27 @@ RegisterNetEvent('fakeid:idinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake ID Card...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -391,6 +412,27 @@ RegisterNetEvent('fakeid:dlinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake Drivers License...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -402,6 +444,7 @@ RegisterNetEvent('fakeid:dlinfo', function(source)
     end
 end)
 
+-- Event for creating a fake DL
 RegisterNetEvent('fakedl:create', function(firstname, lastname, sex, dob, nationality)
     if hasRequiredItems() then
         -- Remove the required items from player's inventory
@@ -410,7 +453,7 @@ RegisterNetEvent('fakedl:create', function(firstname, lastname, sex, dob, nation
             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
         end
 
-        -- Proceed with ID creation logic (assuming server handles ID creation)
+        -- Proceed with DL creation logic (assuming server handles DL creation)
         TriggerServerEvent("fakeid:forgedl", firstname, lastname, sex, dob, nationality)
         exports.qbx_core:Notify("Fake DL created successfully!", 'success', 5000)
     else
@@ -470,6 +513,27 @@ RegisterNetEvent('fakeid:wlinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake Weapons License...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -481,6 +545,7 @@ RegisterNetEvent('fakeid:wlinfo', function(source)
     end
 end)
 
+-- Event for creating a fake WL
 RegisterNetEvent('fakewl:create', function(firstname, lastname, sex, dob, nationality)
     if hasRequiredItems() then
         -- Remove the required items from player's inventory
@@ -489,14 +554,13 @@ RegisterNetEvent('fakewl:create', function(firstname, lastname, sex, dob, nation
             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
         end
 
-        -- Proceed with ID creation logic (assuming server handles ID creation)
+        -- Proceed with WL creation logic (assuming server handles WL creation)
         TriggerServerEvent("fakeid:forgewl", firstname, lastname, sex, dob, nationality)
         exports.qbx_core:Notify("Fake WL created successfully!", 'success', 5000)
     else
         exports.qbx_core:Notify("You do not have the required items to create a fake WL.", 'error', 5000)
     end
 end)
-
 
 RegisterNetEvent('fakeid:lpinfo', function(source)
     -- Get user input for fake LP details
@@ -550,6 +614,27 @@ RegisterNetEvent('fakeid:lpinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake Lawyers Pass...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -561,6 +646,7 @@ RegisterNetEvent('fakeid:lpinfo', function(source)
     end
 end)
 
+-- Event for creating a fake LP
 RegisterNetEvent('fakelp:create', function(firstname, lastname, sex, dob, nationality)
     if hasRequiredItems() then
         -- Remove the required items from player's inventory
@@ -569,7 +655,7 @@ RegisterNetEvent('fakelp:create', function(firstname, lastname, sex, dob, nation
             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
         end
 
-        -- Proceed with ID creation logic (assuming server handles ID creation)
+        -- Proceed with LP creation logic (assuming server handles LP creation)
         TriggerServerEvent("fakeid:forgelp", firstname, lastname, sex, dob, nationality)
         exports.qbx_core:Notify("Fake LP created successfully!", 'success', 5000)
     else
@@ -629,6 +715,27 @@ RegisterNetEvent('fakeid:hlinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake Hunting License...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -640,6 +747,7 @@ RegisterNetEvent('fakeid:hlinfo', function(source)
     end
 end)
 
+-- Event for creating a fake HL
 RegisterNetEvent('fakehl:create', function(firstname, lastname, sex, dob, nationality)
     if hasRequiredItems() then
         -- Remove the required items from player's inventory
@@ -648,7 +756,7 @@ RegisterNetEvent('fakehl:create', function(firstname, lastname, sex, dob, nation
             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
         end
 
-        -- Proceed with ID creation logic (assuming server handles ID creation)
+        -- Proceed with HL creation logic (assuming server handles HL creation)
         TriggerServerEvent("fakeid:forgehl", firstname, lastname, sex, dob, nationality)
         exports.qbx_core:Notify("Fake HL created successfully!", 'success', 5000)
     else
@@ -708,6 +816,27 @@ RegisterNetEvent('fakeid:flinfo', function(source)
             end
         end
 
+        -- After the config stages, manually create a progress bar for "Printing Fake ID Card"
+        local printingSuccess = lib.progressBar({
+            duration = 15000, -- Time in ms for the printing progress (5 seconds as an example)
+            label = "Printing Fake Fishing License...", -- Customize this for ID or Driver's License
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                car = true,
+            },
+            anim = {
+                dict = animDict,
+                clip = animClip
+            },
+        })
+
+        -- Exit if the player cancels the printing process
+        if not printingSuccess then
+            ClearPedTasks(PlayerPedId())
+            return
+        end
+
         -- Clear the animation after progress completion
         ClearPedTasks(PlayerPedId())
 
@@ -719,6 +848,7 @@ RegisterNetEvent('fakeid:flinfo', function(source)
     end
 end)
 
+-- Event for creating a fake FL
 RegisterNetEvent('fakefl:create', function(firstname, lastname, sex, dob, nationality)
     if hasRequiredItems() then
         -- Remove the required items from player's inventory
@@ -727,7 +857,7 @@ RegisterNetEvent('fakefl:create', function(firstname, lastname, sex, dob, nation
             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
         end
 
-        -- Proceed with ID creation logic (assuming server handles ID creation)
+        -- Proceed with FL creation logic (assuming server handles FL creation)
         TriggerServerEvent("fakeid:forgefl", firstname, lastname, sex, dob, nationality)
         exports.qbx_core:Notify("Fake FL created successfully!", 'success', 5000)
     else
