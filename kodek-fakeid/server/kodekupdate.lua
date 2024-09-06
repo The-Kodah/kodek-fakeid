@@ -20,7 +20,7 @@ function KodekVersionCheck.checkForUpdates(localVersion)
                 -- Compare local version with remote version
                 if remoteVersion ~= localVersionNormalized then
                     print("^7==============================")
-                    print("^5[kodek-fakeid] ^7NEW UPDATE: ^2" .. remoteVersion .. "^7 | ^1CURRENT: ^1" .. localVersion .. " ^7>> Download new version from https://github.com/The-Kodah/kodek-fakeid")
+                    print("^5[kodek-fakeid] ^7NEW UPDATE: ^2" .. remoteVersion .. "^7 | CURRENT: ^1" .. localVersion .. " ^7>> Download new version from ^5https://github.com/The-Kodah/kodek-fakeid")
                     print("^7==============================")
                 else
                     print("^7==============================")
