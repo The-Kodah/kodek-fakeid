@@ -156,23 +156,6 @@ local function hasRequiredItems()
     return hasAllItems
 end
 
--- Event for creating a fake ID
-RegisterNetEvent('fakeid:create', function(firstname, lastname, sex, dob, nationality)
-    if hasRequiredItems() then
-        -- Remove the required items from player's inventory
-        for _, itemData in ipairs(Kodek.RequiredItems) do
-            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
-            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
-        end
-
-        -- Proceed with ID creation logic (assuming server handles ID creation)
-        TriggerServerEvent("fakeid:forgeid", firstname, lastname, sex, dob, nationality)
-        exports.qbx_core:Notify("Fake ID created successfully!", 'success', 5000)
-    else
-        exports.qbx_core:Notify("You do not have the required items to create a fake ID.", 'error', 5000)
-    end
-end)
-
 -- Events
 RegisterNetEvent('fakeid:enter', function()
     local hasItem = QBCore.Functions.HasItem("hacker_access_card")  -- Check if player has the item
@@ -339,6 +322,23 @@ RegisterNetEvent('fakeid:idinfo', function(source)
     end
 end)
 
+-- Event for creating a fake ID
+RegisterNetEvent('fakeid:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgeid", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake ID created successfully!", 'success', 5000)
+    else
+        exports.qbx_core:Notify("You do not have the required items to create a fake ID.", 'error', 5000)
+    end
+end)
+
 RegisterNetEvent('fakeid:dlinfo', function(source)
     -- Get user input for fake DL details
     local input = lib.inputDialog('Forge DL Card', {
@@ -398,6 +398,22 @@ RegisterNetEvent('fakeid:dlinfo', function(source)
         TriggerEvent('fakedl:create', firstname, lastname, sex, dob, nationality)
     else
         -- Notify if the player does not have the required items
+        exports.qbx_core:Notify("You do not have the required items to create a fake DL.", 'error', 5000)
+    end
+end)
+
+RegisterNetEvent('fakedl:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgedl", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake DL created successfully!", 'success', 5000)
+    else
         exports.qbx_core:Notify("You do not have the required items to create a fake DL.", 'error', 5000)
     end
 end)
@@ -465,6 +481,23 @@ RegisterNetEvent('fakeid:wlinfo', function(source)
     end
 end)
 
+RegisterNetEvent('fakewl:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgewl", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake WL created successfully!", 'success', 5000)
+    else
+        exports.qbx_core:Notify("You do not have the required items to create a fake WL.", 'error', 5000)
+    end
+end)
+
+
 RegisterNetEvent('fakeid:lpinfo', function(source)
     -- Get user input for fake LP details
     local input = lib.inputDialog('Forge LP Card', {
@@ -524,6 +557,22 @@ RegisterNetEvent('fakeid:lpinfo', function(source)
         TriggerEvent('fakelp:create', firstname, lastname, sex, dob, nationality)
     else
         -- Notify if the player does not have the required items
+        exports.qbx_core:Notify("You do not have the required items to create a fake LP.", 'error', 5000)
+    end
+end)
+
+RegisterNetEvent('fakelp:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgelp", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake LP created successfully!", 'success', 5000)
+    else
         exports.qbx_core:Notify("You do not have the required items to create a fake LP.", 'error', 5000)
     end
 end)
@@ -591,6 +640,22 @@ RegisterNetEvent('fakeid:hlinfo', function(source)
     end
 end)
 
+RegisterNetEvent('fakehl:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgehl", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake HL created successfully!", 'success', 5000)
+    else
+        exports.qbx_core:Notify("You do not have the required items to create a fake HL.", 'error', 5000)
+    end
+end)
+
 RegisterNetEvent('fakeid:flinfo', function(source)
     -- Get user input for fake FL details
     local input = lib.inputDialog('Forge FL Card', {
@@ -650,6 +715,22 @@ RegisterNetEvent('fakeid:flinfo', function(source)
         TriggerEvent('fakefl:create', firstname, lastname, sex, dob, nationality)
     else
         -- Notify if the player does not have the required items
+        exports.qbx_core:Notify("You do not have the required items to create a fake FL.", 'error', 5000)
+    end
+end)
+
+RegisterNetEvent('fakefl:create', function(firstname, lastname, sex, dob, nationality)
+    if hasRequiredItems() then
+        -- Remove the required items from player's inventory
+        for _, itemData in ipairs(Kodek.RequiredItems) do
+            TriggerServerEvent('QBCore:Server:RemoveItem', itemData.item, itemData.amount)
+            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items[itemData.item], 'remove')
+        end
+
+        -- Proceed with ID creation logic (assuming server handles ID creation)
+        TriggerServerEvent("fakeid:forgefl", firstname, lastname, sex, dob, nationality)
+        exports.qbx_core:Notify("Fake FL created successfully!", 'success', 5000)
+    else
         exports.qbx_core:Notify("You do not have the required items to create a fake FL.", 'error', 5000)
     end
 end)
