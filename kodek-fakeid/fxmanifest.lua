@@ -4,7 +4,7 @@ lua54        'yes'
 game         'gta5'
 
 name         'kodek-fakeid'
-version      '1.1.1'
+version      '1.1.2'
 author       'Kodah'
 repository   'https://github.com/The-Kodah/kodah-fakeid'
 
